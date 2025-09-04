@@ -18,7 +18,7 @@ func FindApp(db *sql.DB, keywords []string) error {
     for i := range keywords {
         keywords[i] = strings.ToLower(keywords[i])
     }
-    query := `SELECT name, path FROM apps WHERE name LIKE ? OR path LIKE ?`
+    query := `SELECT id,name, path FROM apps WHERE name LIKE ? OR path LIKE ?`
 
     for _, kw := range keywords {
         // Thêm wildcard % để tìm gần giống
@@ -32,10 +32,11 @@ func FindApp(db *sql.DB, keywords []string) error {
 
         for rows.Next() {
             var name, path string
-            if err := rows.Scan(&name, &path); err != nil {
+            var id int
+            if err := rows.Scan(&id,&name, &path); err != nil {
                 return fmt.Errorf("lỗi đọc dữ liệu: %v", err)
             }
-            fmt.Printf("Tên: %s | Đường dẫn: %s\n", name, path)
+            fmt.Printf("id:%d |Tên: %s | Đường dẫn: %s\n",id, name, path)
         }
     }
 

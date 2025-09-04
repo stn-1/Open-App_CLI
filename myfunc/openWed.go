@@ -1,16 +1,40 @@
 package myfunc
 
 import (
+	"database/sql"
+	"fmt"
 	"os/exec"
 	"runtime"
 )
 
-func openURL(url string) error {
-	var cmd *exec.Cmd
-	if runtime.GOOS == "windows" {
-		cmd = exec.Command("cmd", "/c", "start", url)
-	} else {
-		cmd = exec.Command("xdg-open", url) // Dành cho Linux
+func openURL(db *sql.DB, webID int) error {
+	var name, url string
+	// Lấy ra name và url từ DB
+	err := db.QueryRow("SELECT name, path FROM webs WHERE id = ?", webID).Scan(&name, &url)
+	if err != nil {
+		return fmt.Errorf("Không tìm thấy website với id %d: %v", webID, err)
 	}
-	return cmd.Start()
+	// Tạo lệnh mở URL tùy hệ điều hành
+	var cmd *exec.Cmd
+	switch runtime.GOOS {
+	case "windows":
+		cmd = exec.Command("cmd", "/c", "start", url)
+	case "darwin": // macOS
+		cmd = exec.Command("open", url)
+	default: // Linux
+		cmd = exec.Command("xdg-open", url)
+	}
+	// Thực thi
+	err = cmd.Start()
+	if err != nil {
+		return fmt.Errorf("Không thể mở website %s: %v", name, err)
+	}
+	fmt.Printf("Đang mở website %s...\n", name)
+	return nil
+}
+
+func RunListWeb(db *sql.DB,ListUrl[] int){
+	for _,webID:=range ListUrl{
+		openURL(db,webID)
+	}
 }

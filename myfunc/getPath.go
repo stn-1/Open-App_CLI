@@ -61,13 +61,13 @@ func SaveAppToDB(db *sql.DB, name, path string) error {
 }
 // Lấy tất cả app
 
-func GetAllAppsByName(db *sql.DB) (map[string]string, error) {
+func GetAllAppsByName(db *sql.DB)  error {
     allApps := make(map[string]string)
 
     // 1. Registry
     registryApps, err := GetInstalledAppsByName()
     if err != nil {
-        return nil, err
+        return err
     }
     for name, path := range registryApps {
         allApps[name] = path
@@ -80,7 +80,7 @@ func GetAllAppsByName(db *sql.DB) (map[string]string, error) {
     // 2. Running processes
     runningApps, err := GetRunningProcessesByName()
     if err != nil {
-        return nil, err
+        return err
     }
     for name, path := range runningApps {
         if _, exists := allApps[name]; !exists {
@@ -91,7 +91,31 @@ func GetAllAppsByName(db *sql.DB) (map[string]string, error) {
         }
     }
 
-    return allApps, nil
+    return nil
+}
+func GetAppsFromDB(db *sql.DB) (map[string]string, error) {
+    apps := make(map[string]string)
+
+    rows, err := db.Query("SELECT name, path FROM apps")
+    if err != nil {
+        return nil, err
+    }
+    defer rows.Close()
+
+    for rows.Next() {
+        var name, path string
+        if err := rows.Scan(&name, &path); err != nil {
+            return nil, err
+        }
+        apps[name] = path
+    }
+
+    // kiểm tra lỗi khi duyệt rows
+    if err := rows.Err(); err != nil {
+        return nil, err
+    }
+
+    return apps, nil
 }
 
 // Lấy app từ registry

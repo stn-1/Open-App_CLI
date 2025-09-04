@@ -1,17 +1,31 @@
 package myfunc
 
 import (
+	"database/sql"
 	"fmt"
 	"os/exec"
 )
 
 // OpenApps mở ứng dụng theo đường dẫn/tên, trả về error nếu có lỗi
-func OpenApps(SelectApp string) error {
-	cmd := exec.Command(SelectApp)
-	err := cmd.Start()
+func OpenApps(db *sql.DB, AppID int) error {
+	var name, path string
+	// Lấy ra name và path từ DB
+	err := db.QueryRow("SELECT name, path FROM apps WHERE id = ?", AppID).Scan(&name, &path)
 	if err != nil {
-		return fmt.Errorf("Không thể mở ứng dụng %s: %v", SelectApp, err)
+		return fmt.Errorf("Không tìm thấy ứng dụng với id %d: %v", AppID, err)
 	}
-	fmt.Printf("Đang mở ứng dụng %s...\n", SelectApp)
+	// Tạo lệnh mở app
+	cmd := exec.Command(path)
+	err = cmd.Start()
+	if err != nil {
+		return fmt.Errorf("Không thể mở ứng dụng %s: %v", name, err)
+	}
+	fmt.Printf("Đang mở ứng dụng %s...\n", name)
 	return nil
+}
+
+func RunListApp(db *sql.DB , listpath []int){
+	for _,AppID:=range listpath{
+		OpenApps(db,AppID)
+	}
 }

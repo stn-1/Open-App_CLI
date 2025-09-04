@@ -8,7 +8,7 @@ func GetApp(){
 	if(err!=nil){
 		fmt.Println("error")
 	}
-	app,err:=GetAllAppsByName(db)
+	app,err:=GetAppsFromDB(db)
 	for name,_:= range(app){
 		fmt.Println(name)
 	}

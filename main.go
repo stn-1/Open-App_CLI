@@ -10,9 +10,19 @@ func main(){
 	if(err!=nil){
 		fmt.Println("error")
 	}
-	apps:=[]string{"zalo","google"}
-	app,_:=myfunc.ReturnAppList(db,apps)
-	for _,a := range app{
-		fmt.Println(a)
+	dbweb,err:=myfunc.InitWebDB()
+	if(err!=nil){
+		fmt.Println("error")
 	}
+	webs:=map[string]string{"youtube":"https://www.youtube.com/"}
+	apps:=[]string{"zalo","google"}
+	myfunc.FindApp(db,apps)
+	applist:=[]int{59,480}
+	weblist:=[]string{"youtube"}
+	myfunc.RunListApp(db,applist)
+	myfunc.GetAllURLsByInput(dbweb,webs)
+	myfunc.FindWeb(dbweb,weblist)
+	// for name,a := range apps{
+	// 	fmt.Println(name,a)
+	// }
 }
