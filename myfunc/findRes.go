@@ -8,7 +8,7 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
-func FindWeb(db *sql.DB, keywords []string) error {
+func FindRes(db *sql.DB, keywords []string) error {
 	if db == nil {
         return fmt.Errorf("kết nối database không hợp lệ")
     }
@@ -18,7 +18,7 @@ func FindWeb(db *sql.DB, keywords []string) error {
     for i := range keywords {
         keywords[i] = strings.ToLower(keywords[i])
     }
-    query := `SELECT id,name, path FROM webs WHERE name LIKE ? OR path LIKE ?`
+    query := `SELECT id,name, path FROM resources WHERE name LIKE ? OR path LIKE ?`
 
     for _, kw := range keywords {
         // Thêm wildcard % để tìm gần giống
@@ -39,9 +39,5 @@ func FindWeb(db *sql.DB, keywords []string) error {
             fmt.Printf("id:%d |Tên: %s | Đường dẫn: %s\n",id, name, path)
         }
     }
-
     return nil
-}
-func ShowWebInDB(){
-    
 }

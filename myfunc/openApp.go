@@ -10,7 +10,7 @@ import (
 func OpenApps(db *sql.DB, AppID int) error {
 	var name, path string
 	// Lấy ra name và path từ DB
-	err := db.QueryRow("SELECT name, path FROM apps WHERE id = ?", AppID).Scan(&name, &path)
+	err := db.QueryRow("SELECT name, path FROM resources WHERE id = ?", AppID).Scan(&name, &path)
 	if err != nil {
 		return fmt.Errorf("Không tìm thấy ứng dụng với id %d: %v", AppID, err)
 	}
@@ -24,8 +24,3 @@ func OpenApps(db *sql.DB, AppID int) error {
 	return nil
 }
 
-func RunListApp(db *sql.DB , listpath []int){
-	for _,AppID:=range listpath{
-		OpenApps(db,AppID)
-	}
-}

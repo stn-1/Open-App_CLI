@@ -10,7 +10,7 @@ import (
 func openURL(db *sql.DB, webID int) error {
 	var name, url string
 	// Lấy ra name và url từ DB
-	err := db.QueryRow("SELECT name, path FROM webs WHERE id = ?", webID).Scan(&name, &url)
+	err := db.QueryRow("SELECT name, path FROM resources WHERE id = ?", webID).Scan(&name, &url)
 	if err != nil {
 		return fmt.Errorf("Không tìm thấy website với id %d: %v", webID, err)
 	}
@@ -33,8 +33,3 @@ func openURL(db *sql.DB, webID int) error {
 	return nil
 }
 
-func RunListWeb(db *sql.DB,ListUrl[] int){
-	for _,webID:=range ListUrl{
-		openURL(db,webID)
-	}
-}
